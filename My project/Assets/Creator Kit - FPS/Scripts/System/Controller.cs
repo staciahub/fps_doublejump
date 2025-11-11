@@ -44,6 +44,7 @@ public class Controller : MonoBehaviour
     bool m_IsPaused = false;
     int m_CurrentWeapon;
     
+    
     float m_VerticalAngle, m_HorizontalAngle;
     public float Speed { get; private set; } = 0.0f;
 
@@ -57,6 +58,8 @@ public class Controller : MonoBehaviour
     bool m_Grounded;
     float m_GroundedTimer;
     float m_SpeedAtJump = 0.0f;
+    
+    bool m_HasDoubleJumped = false;
 
     List<Weapon> m_Weapons = new List<Weapon>();
     Dictionary<int, int> m_AmmoInventory = new Dictionary<int, int>();
@@ -132,6 +135,7 @@ public class Controller : MonoBehaviour
         {
             m_GroundedTimer = 0.0f;
             m_Grounded = true;
+            m_HasDoubleJumped  = false;
         }
 
         Speed = 0;
@@ -144,7 +148,16 @@ public class Controller : MonoBehaviour
                 m_VerticalSpeed = JumpSpeed;
                 m_Grounded = false;
                 loosedGrounding = true;
-                FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f,1.1f);
+                FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f, 1.1f);
+            }
+            
+        else if (!m_Grounded && !m_HasDoubleJumped && Input.GetButtonDown("Jump"))  
+            
+            {
+                m_VerticalSpeed = JumpSpeed;
+                m_HasDoubleJumped = true;
+                FootstepPlayer.PlayClip(JumpingAudioCLip,0.8f,1.1f);
+
             }
             
             bool running = m_Weapons[m_CurrentWeapon].CurrentState == Weapon.WeaponState.Idle && Input.GetButton("Run");
